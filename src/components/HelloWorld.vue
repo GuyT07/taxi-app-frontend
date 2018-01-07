@@ -10,7 +10,11 @@
       <br>
       <li><a href="http://vuejs-templates.github.io/webpack/" target="_blank">Docs for This Template</a></li>
     </ul>
+
     <p>Store count: {{ $store.state.count }}</p>
+    <button class="btn btn-success" @click="increment">+</button>
+    <button class="btn btn-danger" @click="decrement">-</button>
+    
     <h2>Ecosystem</h2>
     <ul>
       <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
@@ -22,13 +26,18 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 export default {
   name: 'HelloWorld',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
     }
-  }
+  },
+  methods: mapActions([
+    'increment',
+    'decrement'
+  ])
 }
 </script>
 
