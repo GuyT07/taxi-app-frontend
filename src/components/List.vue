@@ -1,14 +1,22 @@
 <template>
-
+<div>
     <ul>
       <li v-for="user in users">
-        <a class="button" href="#">
+        <a class="button" href="#" v-on:click="isClicked = !isClicked">
           {{ user.firstname }}
           {{ user.lastname }}
         </a>
       </li>
     </ul>
 
+    <p v-if="!isClicked">
+      Click
+   </p>
+    <p v-else>
+     Clack
+   </p>
+
+  </div>
 </template>
 
 <script>
@@ -18,6 +26,7 @@ export default {
   name: 'List',
   data () {
     return {
+        isClicked: false,
       users: []
     }
   },
