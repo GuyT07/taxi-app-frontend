@@ -1,12 +1,14 @@
 <template>
-  <div >
-    <ul id="example-1">
-      <li v-for="item in items">
-        {{ item.message }}
+
+    <ul>
+      <li v-for="user in users">
+        <a class="button" href="#">
+          {{ user.firstname }}
+          {{ user.lastname }}
+        </a>
       </li>
     </ul>
 
-  </div>
 </template>
 
 <script>
@@ -14,12 +16,43 @@ export default {
   name: 'List',
   data() {
     return {
-        items: [
-          { message: 'Foo' },
-          { message: 'Bar' }
+        users: [
+          {
+            firstname: 'Guy',
+            lastname: ' O\'Green'
+           },
+          {
+            firstname: 'Lydia',
+            lastname: 'Live Fast'
+          },
+          {
+            firstname: 'Willem',
+            lastname: 'All under control'
+          },
+          {
+            firstname: 'Linda',
+            lastname: 'Likes Vue.js'
+          },
+          {
+            firstname: 'GP',
+            lastname: 'G-The-*************-P'
+          },
+          {
+            firstname: 'Wesley',
+            lastname: 'Whatevah'
+          },
+          {
+            firstname: 'Ilonka',
+            lastname: 'I-Repair'
+          }
         ]
       }
   }
 }
 </script>
+
+<style scoped>
+
+
+</style>
 
