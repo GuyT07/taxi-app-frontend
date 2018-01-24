@@ -31,7 +31,7 @@ export default {
           },
           {
             firstname: 'Linda',
-            lastname: 'Likes Vue.js'
+            lastname: 'L-to-the Vue.js'
           },
           {
             firstname: 'GP',
