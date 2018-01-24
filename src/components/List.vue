@@ -12,41 +12,22 @@
 </template>
 
 <script>
+import UserService from '../services/UserService.js'
+var userService = new UserService()
 export default {
   name: 'List',
-  data() {
+  data () {
     return {
-        users: [
-          {
-            firstname: 'Guy',
-            lastname: ' O\'Green'
-           },
-          {
-            firstname: 'Lydia',
-            lastname: 'Live Fast'
-          },
-          {
-            firstname: 'Willem',
-            lastname: 'All under control'
-          },
-          {
-            firstname: 'Linda',
-            lastname: 'L-to-the Vue.js'
-          },
-          {
-            firstname: 'GP',
-            lastname: 'G-The-*************-P'
-          },
-          {
-            firstname: 'Wesley',
-            lastname: 'Whatevah'
-          },
-          {
-            firstname: 'Ilonka',
-            lastname: 'I-Repair'
-          }
-        ]
-      }
+      users: []
+    }
+  },
+  methods: {
+    getUsers: function () {
+      this.users = userService.getUsers();
+    }
+  },
+  created () {
+    this.getUsers()
   }
 }
 </script>
