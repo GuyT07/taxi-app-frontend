@@ -1,22 +1,25 @@
 <template>
-  <div ="hello">
-    List
+  <div >
+    <ul id="example-1">
+      <li v-for="item in items">
+        {{ item.message }}
+      </li>
+    </ul>
+
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 export default {
   name: 'List',
-  data () {
+  data() {
     return {
-      msg: 'Welcome to List'
-    }
-  },
-  methods: mapActions([
-    'increment',
-    'decrement'
-  ])
+        items: [
+          { message: 'Foo' },
+          { message: 'Bar' }
+        ]
+      }
+  }
 }
 </script>
 
