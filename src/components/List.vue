@@ -1,14 +1,22 @@
 <template>
-
+  <div>
     <ul>
       <li v-for="user in users">
-        <a class="button" href="#">
+        <a class="button" href="#" v-on:click="isClicked = !isClicked">
           {{ user.firstname }}
           {{ user.lastname }}
         </a>
       </li>
     </ul>
 
+    <p v-if="!isClicked">
+      Click
+   </p>
+    <p v-else>
+     Clack
+   </p>
+
+  </div>
 </template>
 
 <script>
@@ -16,37 +24,38 @@ export default {
   name: 'List',
   data() {
     return {
-        users: [
-          {
-            firstname: 'Guy',
-            lastname: ' O\'Green'
-           },
-          {
-            firstname: 'Lydia',
-            lastname: 'Live Fast'
+      isClicked: false,
+      users: [
+        {
+          firstname: 'Guy',
+          lastname: ' O\'Green'
           },
-          {
-            firstname: 'Willem',
-            lastname: 'All under control'
-          },
-          {
-            firstname: 'Linda',
-            lastname: 'L-to-the Vue.js'
-          },
-          {
-            firstname: 'GP',
-            lastname: 'G-The-*************-P'
-          },
-          {
-            firstname: 'Wesley',
-            lastname: 'Whatevah'
-          },
-          {
-            firstname: 'Ilonka',
-            lastname: 'I-Repair'
-          }
-        ]
-      }
+        {
+          firstname: 'Lydia',
+          lastname: 'Live Fast'
+        },
+        {
+          firstname: 'Willem',
+          lastname: 'All under control'
+        },
+        {
+          firstname: 'Linda',
+          lastname: 'L-to-the Vue.js'
+        },
+        {
+          firstname: 'GP',
+          lastname: 'G-The-*************-P'
+        },
+        {
+          firstname: 'Wesley',
+          lastname: 'Whatevah'
+        },
+        {
+          firstname: 'Ilonka',
+          lastname: 'I-Repair'
+        }
+      ]
+    }
   }
 }
 </script>
