@@ -47,7 +47,6 @@ export default {
 
   createTaxiDrive (rit) {
     let start = new Date(rit.start).getTime()
-    debugger
     return Vue.axios.post(BASE_URL + 'taxi', {
       id: rit.taxi_id,
       ritten: [{

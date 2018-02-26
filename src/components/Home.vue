@@ -126,9 +126,7 @@ export default {
     },
     eventCreated (event) {
       this.selected = event
-      this.resetModel()
-      this.setModel(event)
-      this.show()
+      this.show(event)
     },
     eventClick: (...event) => {
       this.selected = event
@@ -150,7 +148,7 @@ export default {
         if (this.model.hasOwnProperty(prop)) {
           if (prop !== "start")
             this.model[prop] = newProps[prop]
-          else
+          else 
             this.model[prop] = moment(newProps[prop]).format('YYYY-MM-DD[T]HH:mm')
         }
       }
