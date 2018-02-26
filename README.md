@@ -1,4 +1,4 @@
-# kudos
+# Taxi front end
 
 > with vue and vuex
 
