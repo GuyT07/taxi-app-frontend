@@ -27,33 +27,37 @@
         <button type="submit" class="btn" v-on:click="hide">Sluiten</button>
       </form>
     </modal>
-    <!-- <modal name="driver" :draggable="true" :resizable="true" height="auto">
+    <modal name="taxi" :draggable="true" :resizable="true" height="auto">
       <form class="detail">
         <div class="form-group">
-          <label for="chauffeurNaam">Chauffeur</label>
-          <select class="form-control" v-model="model.taxi_id">
+          <label for="driverName">Chauffeur</label>
+          <select class="form-control" v-model="taxiModel.taxi_id" v-on:change="onChangeTaxi">
+            <option :value="null">Kies chauffeur...</option>
             <option v-for="option in chauffeurs" v-bind:key="option.taxi_id" v-bind:value="option.taxi_id">
               {{ option.chauffeurNaam }}
             </option>
           </select>
-          <input v-if="model.taxi_id == null" type="text" v-model="model.chauffeurNaam" class="form-control" id="chauffeurNaam" aria-describedby="chauffeurNaamHelp" placeholder="Chauffeur naam">
-          <small id="chauffeurNaamHelp" class="form-text text-muted">Naam van de chauffeur</small>
+        </div>
+        <div class="form-group">
+          <input type="text" v-model="taxiModel.name" class="form-control" id="driverName" aria-describedby="driverNameHelp" placeholder="Chauffeur naam">
+          <small id="driverName" class="form-text text-muted">Naam van de chauffeur</small>
         </div>
         <div class="form-group">
           <label for="email">E-mail</label>
-          <input type="text" v-model="model.email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="E-mail">
+          <input type="text" v-model="taxiModel.mail" class="form-control" id="email" aria-describedby="emailHelp" placeholder="E-mail">
           <small id="emailHelp" class="form-text text-muted">Wat is het e-mailadres?</small>
         </div>
         <div class="form-group">
           <label for="typeAuto">Type auto</label>
-          <input type="email" v-model="model.typeAuto" class="form-control" id="typeAuto" aria-describedby="typeAutoHelp" placeholder="Type auto">
+          <input type="text" v-model="taxiModel.type" class="form-control" id="typeAuto" aria-describedby="typeAutoHelp" placeholder="Type auto">
           <small id="typeAutoHelp" class="form-text text-muted">Wat is het voor type auto?</small>
         </div>
-        <button type="submit" class="btn btn-primary" v-on:click="handleEvent">Versturen</button> 
-        <button type="submit" v-if="model.id != null" v-on:click="deleteEvent" class="btn btn-danger">Verwijderen</button>
-        <button type="submit" class="btn" v-on:click="hideDriver">Sluiten</button>
+        <button type="submit" class="btn btn-primary" v-on:click="handleTaxi">Versturen</button> 
+        <button type="submit" v-if="taxiModel.taxi_id != null" v-on:click="deleteTaxi" class="btn btn-danger">Verwijderen</button>
+        <button type="submit" v-if="taxiModel.taxi_id != null" v-on:click="newTaxi" class="btn btn-success">Nieuw</button>
+        <button type="submit" class="btn" v-on:click="hideTaxi">Sluiten</button>
       </form>
-    </modal> -->
+    </modal>
   </div>
 </template>
 
@@ -73,8 +77,13 @@ export default {
         plaats: null,
         taxi_id: null
       },
-
-      chauffeurs : [],
+      taxiModel: {
+        taxi_id: null,
+        name: null,
+        mail: null,
+        type: null
+      },
+      chauffeurs: [],
       eventSources: [
         {
           events (start, end, timezone, callback) {
@@ -83,7 +92,7 @@ export default {
               taxis.forEach(element => {
                 if (element.ritten && element.ritten.length > 0) {
                   element.ritten.forEach(rit => {
-                    events.push({id:rit.id, taxi_id: element.id, old_taxi_id: element.id, plaats: rit.plaats, chauffeurNaam: element.chauffeurNaam, title: element.chauffeurNaam + ' - ' + rit.plaats, start: rit.date})
+                    events.push({id: rit.id, taxi_id: element.id, old_taxi_id: element.id, plaats: rit.plaats, chauffeurNaam: element.chauffeurNaam, title: element.chauffeurNaam + ' - ' + rit.plaats, start: rit.date})
                   })
                 }
               })
@@ -99,12 +108,12 @@ export default {
         timezone: 'local',
         header: {
           left: 'prev,next today myCustomButton',
-          right: "month,agendaWeek,agendaDay,listMonth"
+          right: 'month,agendaWeek,agendaDay,listMonth'
         },
         customButtons: {
           myCustomButton: {
-              text: 'chauffeurs',
-              click: this.showDriver
+            text: 'chauffeurs',
+            click: this.showTaxi
           }
         }
       },
@@ -131,31 +140,32 @@ export default {
     eventClick: (...event) => {
       this.selected = event
     },
-    resetModel () {
-      for (var prop in this.model) {
-        this.model[prop] = null
+    resetModel (model) {
+      for (var prop in model) {
+        model[prop] = null
       }
     },
-    showDriver () {
-      this.$modal.show('driver')
+    showTaxi () {
+      this.$modal.show('taxi')
     },
-    hideDriver () {
-      this.$modal.hide('driver')
+    hideTaxi () {
+      this.$modal.hide('taxi')
     },
     setModel (newProps) {
-      this.resetModel()
+      this.resetModel(this.model)
       for (var prop in newProps) {
         if (this.model.hasOwnProperty(prop)) {
-          if (prop !== "start")
+          if (prop !== 'start') {
             this.model[prop] = newProps[prop]
-          else 
+          } else {
             this.model[prop] = moment(newProps[prop]).format('YYYY-MM-DD[T]HH:mm')
+          }
         }
       }
     },
     eventDrop (event) {
       this.setModel(event)
-      this.updateRit()
+      this.updateTaxi()
     },
     show (rit) {
       this.setModel(rit)
@@ -165,38 +175,77 @@ export default {
       this.$modal.hide('detail')
     },
     handleEvent () {
-      if (this.model.id !== null)
-        if (this.model.old_taxi_id == this.model.taxi_id) {
-          this.updateRit();
-        } else {
-          this.updateTaxi()
-        }
-      else
-        this.createEvent()
+      if (this.model.id !== null) {
+        this.updateTaxiRit(this.model)
+      } else {
+        this.createTaxiRit(this.model)
+      }
+    },
+    handleTaxi () {
+      if (this.taxiModel.taxi_id === null) {
+        this.createTaxi(this.taxiModel)
+      } else {
+        this.updateTaxiDriver(this.taxiModel)
+      }
+    },
+    createTaxi () {
+      TaxiService.createTaxi(this.taxiModel).then(taxi => {
+        this.refreshEvents()
+        this.getDriversList()
+        this.hideTaxi()
+      }).catch(console.log('Could not create "Taxi"'))
+    },
+    updateTaxiDriver () {
+      TaxiService.updateTaxi(this.taxiModel).then(taxi => {
+        this.refreshEvents()
+        this.getDriversList()
+        this.hideTaxi()
+      }).catch(console.log('Could not update "Taxi"'))
+    },
+    newTaxi () {
+      this.resetModel(this.taxiModel)
+    },
+    deleteTaxi () {
+      TaxiService.deleteTaxi(this.taxiModel.taxi_id).then(result => {
+        this.refreshEvents()
+        this.getDriversList()
+        this.hideTaxi()
+      }).catch(console.log('Could not delete taxi'))
+    },
+    onChangeTaxi () {
+      if (this.taxiModel.taxi_id === null) {
+        return this.resetModel(this.taxiModel)
+      }
+      TaxiService.getTaxi(this.taxiModel.taxi_id).then(taxi => {
+        this.taxiModel.taxi_id = taxi.id
+        this.taxiModel.name = taxi.chauffeurNaam
+        this.taxiModel.mail = taxi.emailChauffeur
+        this.taxiModel.type = taxi.typeAuto
+      })
     },
     updateTaxi () {
-      TaxiService.updateTaxi(this.model).then(result => {
+      TaxiService.updateTaxiRit(this.model).then(result => {
         this.refreshEvents()
         this.hide()
-      }).catch(console.log("Could not update entity"))
+      }).catch(console.log('Could not update entity'))
     },
-    updateRit () {
-      TaxiService.updateRit(this.model).then(result => {
+    updateTaxiRit () {
+      TaxiService.updateTaxiRit(this.model).then(result => {
         this.refreshEvents()
         this.hide()
-      }).catch(console.log("Could not update 'Rit'"))
+      }).catch(console.log('Could not update "Rit"'))
     },
-    createEvent () {
+    createTaxiRit () {
       TaxiService.createTaxiDrive(this.model).then(result => {
         this.refreshEvents()
         this.hide()
-      }).catch(console.log("Could not create entity"))
+      }).catch(console.log('Could not create entity'))
     },
     deleteEvent () {
       TaxiService.deleteRit(this.model.id).then(result => {
         this.refreshEvents()
         this.hide()
-      }).catch(console.log("Could not delete entity"))
+      }).catch(console.log('Could not delete entity'))
     },
     getDriversList () {
       TaxiService.getTaxis().then(taxis => {
@@ -208,7 +257,7 @@ export default {
       })
     }
   },
-  mounted: function() {
+  mounted: function () {
     this.getDriversList()
   }
 }
